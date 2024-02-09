@@ -40,7 +40,7 @@ public class ProfessorsController {
     @RequestMapping(value="/professor/edit/{id}", method=RequestMethod.POST)
     public String setEdit(@ModelAttribute Professor professor, @PathVariable Long id){
         professor.setId(id);
-        professorsService.addProfessor(professor);
+        professorsService.editProfessor(professor);
         return "Professor edited";
     }
 }

@@ -38,4 +38,19 @@ public class ProfessorsService {
     public void deleteProfessor(Long id){
         professorsList.removeIf(professor -> professor.getId().equals(id));
     }
+    public void editProfessor(Professor professor){
+        Professor p=null;
+        for(Professor i: professorsList){
+            if(i.getId().equals(professor.getId())){
+                p=i;
+                break;
+            }
+        }
+        if(p!=null){
+            p.setDni(professor.getDni());
+            p.setName(professor.getName());
+            p.setSurname(professor.getSurname());
+            p.setCategory(professor.getCategory());
+        }
+    }
 }
