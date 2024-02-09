@@ -47,6 +47,6 @@ public class ProfessorsController {
     public String setEdit(@ModelAttribute Professor professor, @PathVariable Long id){
         professor.setId(id);
         professorsService.editProfessor(professor);
-        return "Professor edited";
+        return "redirect:/professor/list";
     }
 }
