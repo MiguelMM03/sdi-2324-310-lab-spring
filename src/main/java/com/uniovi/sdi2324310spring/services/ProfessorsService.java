@@ -1,56 +1,41 @@
 package com.uniovi.sdi2324310spring.services;
 
+import com.uniovi.sdi2324310spring.entities.Mark;
 import com.uniovi.sdi2324310spring.entities.Professor;
+import com.uniovi.sdi2324310spring.repositories.ProfessorsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfessorsService {
-    private List<Professor> professorsList=new ArrayList<>();
-    @PostConstruct
-    public void init(){
-        professorsList.add(new Professor(1L, "123445678A", "Jaime", "García", "Titular"));
-        professorsList.add(new Professor(2L, "87654321A", "Lucas", "Vazquez", "Ayudante"));
-    }
+    @Autowired
+    private ProfessorsRepository professorsRepository;
 
     public List<Professor> getProfessorsList() {
-        return professorsList;
+        List<Professor> professors = new ArrayList<>();
+        professorsRepository.findAll().forEach(professors::add);
+        return professors;
     }
 
     public Professor getProfessor(Long id){
-        for(Professor p: professorsList){
-            if(p.getId().equals(id)){
-                return p;
-            }
-        }
-        return null;
+        return professorsRepository.findById(id).get();
     }
     public void addProfessor(Professor professor){
-        if(professor.getId()==null){
-            professor.setId(professorsList.get(professorsList.size()-1).getId()+1);
-        }
-        professorsList.add(professor);
+        professorsRepository.save(professor);
     }
     public void deleteProfessor(Long id){
-        professorsList.removeIf(professor -> professor.getId().equals(id));
+        professorsRepository.deleteById(id);
     }
     public void editProfessor(Professor professor){
-        Professor p=null;
-        for(Professor i: professorsList){
-            if(i.getId().equals(professor.getId())){
-                p=i;
-                break;
-            }
-        }
-        if(p!=null){
-            p.setDni(professor.getDni());
-            p.setName(professor.getName());
-            p.setSurname(professor.getSurname());
-            p.setCategory(professor.getCategory());
+        Optional<Professor> p=professorsRepository.findById(professor.getId());
+        if(p.isPresent()){
+            professorsRepository.save(professor);
         }
     }
 }
