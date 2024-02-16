@@ -2,6 +2,7 @@ package com.uniovi.sdi2324310spring.controllers;
 
 import com.uniovi.sdi2324310spring.services.SecurityService;
 import com.uniovi.sdi2324310spring.validators.SignUpFormValidator;
+import com.uniovi.sdi2324310spring.validators.UsersValidator;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,14 +15,20 @@ import com.uniovi.sdi2324310spring.entities.*;
 import com.uniovi.sdi2324310spring.services.UsersService;
 @Controller
 public class UsersController {
+    @Autowired
     private final UsersService usersService;
+    @Autowired
     private final SecurityService securityService;
+    @Autowired
     private final SignUpFormValidator signUpFormValidator;
+    @Autowired
+    private final UsersValidator usersValidator;
     public UsersController(UsersService usersService, SecurityService securityService, SignUpFormValidator
-            signUpFormValidator) {
+            signUpFormValidator, UsersValidator usersValidator) {
         this.usersService = usersService;
         this.securityService = securityService;
         this.signUpFormValidator = signUpFormValidator;
+        this.usersValidator = usersValidator;
     }
     @RequestMapping("/user/list")
     public String getList(Model model) {
@@ -31,10 +38,18 @@ public class UsersController {
     @RequestMapping(value = "/user/add")
     public String getUser(Model model) {
         model.addAttribute("usersList", usersService.getUsers());
+        model.addAttribute("user", new User());
         return "user/add";
     }
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public String setUser(@ModelAttribute User user) {
+    public String setUser(@Validated User user, BindingResult result, Model model) {
+        usersValidator.validate(user,result);
+        usersService.addUser(user);
+        if(result.hasErrors()){
+            model.addAttribute("usersList", usersService.getUsers());
+            model.addAttribute("user", user);
+            return "/user/add";
+        }
         usersService.addUser(user);
         return "redirect:/user/list";
     }
