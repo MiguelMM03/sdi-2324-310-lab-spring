@@ -1,5 +1,6 @@
 package com.uniovi.sdi2324310spring.controllers;
 
+import com.uniovi.sdi2324310spring.services.RolesService;
 import com.uniovi.sdi2324310spring.services.SecurityService;
 import com.uniovi.sdi2324310spring.validators.SignUpFormValidator;
 import com.uniovi.sdi2324310spring.validators.UsersValidator;
@@ -20,13 +21,16 @@ public class UsersController {
     @Autowired
     private final SecurityService securityService;
     @Autowired
+    private final RolesService rolesService;
+    @Autowired
     private final SignUpFormValidator signUpFormValidator;
     @Autowired
     private final UsersValidator usersValidator;
-    public UsersController(UsersService usersService, SecurityService securityService, SignUpFormValidator
+    public UsersController(UsersService usersService, SecurityService securityService, RolesService rolesService, SignUpFormValidator
             signUpFormValidator, UsersValidator usersValidator) {
         this.usersService = usersService;
         this.securityService = securityService;
+        this.rolesService = rolesService;
         this.signUpFormValidator = signUpFormValidator;
         this.usersValidator = usersValidator;
     }
@@ -37,6 +41,7 @@ public class UsersController {
     }
     @RequestMapping(value = "/user/add")
     public String getUser(Model model) {
+        model.addAttribute("rolesList", rolesService.getRoles());
         model.addAttribute("usersList", usersService.getUsers());
         model.addAttribute("user", new User());
         return "user/add";
@@ -85,6 +90,7 @@ public class UsersController {
         if(result.hasErrors()){
             return "signup";
         }
+        user.setRole(rolesService.getRoles()[0]);
         usersService.addUser(user);
         securityService.autoLogin(user.getDni(),user.getPassword());
         return "redirect:home";
