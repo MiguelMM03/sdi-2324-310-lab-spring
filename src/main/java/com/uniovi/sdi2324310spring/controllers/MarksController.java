@@ -6,6 +6,8 @@ import com.uniovi.sdi2324310spring.services.MarksService;
 import com.uniovi.sdi2324310spring.services.UsersService;
 import com.uniovi.sdi2324310spring.validators.MarksValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,13 +36,18 @@ public class MarksController {
         this.httpSession = httpSession;
     }
     @RequestMapping("/mark/list")
-    public String getList(Model model) {
-        model.addAttribute("markList", marksService.getMarks());
+    public String getList(Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+        User user = usersService.getUserByDni(dni);
+        model.addAttribute("markList", marksService.getMarksForUser(user));
         return "mark/list";
     }
     @RequestMapping("/mark/list/update")
-    public String updateList(Model model){
-        model.addAttribute("markList", marksService.getMarks() );
+    public String updateList(Model model, Principal principal) {
+        String dni = principal.getName(); // DNI es el name de la autenticación
+        User user = usersService.getUserByDni(dni);
+        model.addAttribute("markList", marksService.getMarksForUser(user));
         return "mark/list :: marksTable";
     }
     @RequestMapping(value = "/mark/add", method = RequestMethod.POST)

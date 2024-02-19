@@ -32,7 +32,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="mark : ${markList}">
-                    <td scope="row" th:text="${mark.id}"> 1</td>
+                    <td th:text="${mark.id}"> 1</td>
                     <td th:text="${mark.description}"> Ejercicio 1</td>
                     <td th:text="${mark.score}">10</td>
                     <td><a th:href="${'/mark/details/' + mark.id}">detalles</a></td>
