@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head th:replace="fragments/head"></head>
 
 <body>
@@ -30,9 +30,9 @@
                 <td th:text="${professor.name}"></td>
                 <td th:text="${professor.surname}"></td>
                 <td th:text="${professor.category}"></td>
-                <td><a th:href="${'/professor/details/' + professor.id}">detalles</a></td>
-                <td><a th:href="${'/professor/edit/' + professor.id}">modificar</a></td>
-                <td><a th:href="${'/professor/delete/' + professor.id}">eliminar</a></td>
+                <td><a sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')" th:href="${'/professor/details/' + professor.id}">detalles</a></td>
+                <td><a sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="${'/professor/edit/' + professor.id}">modificar</a></td>
+                <td><a sec:authorize="hasAnyRole('ROLE_ADMIN')" th:href="${'/professor/delete/' + professor.id}">eliminar</a></td>
             </tr>
             </tbody>
         </table>
