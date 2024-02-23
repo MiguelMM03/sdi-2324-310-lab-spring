@@ -37,7 +37,7 @@ public class UsersController {
     @RequestMapping("/user/list")
     public String getList(Model model) {
         model.addAttribute("usersList", usersService.getUsers());
-        return "fragments/list :: markList";
+        return "user/list";
     }
     @RequestMapping(value = "/user/add")
     public String getUser(Model model) {
