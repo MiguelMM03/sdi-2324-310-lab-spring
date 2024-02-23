@@ -1,10 +1,14 @@
 package com.uniovi.sdi2324310spring.controllers;
 
+import com.uniovi.sdi2324310spring.services.MarksService;
 import com.uniovi.sdi2324310spring.services.RolesService;
 import com.uniovi.sdi2324310spring.services.SecurityService;
 import com.uniovi.sdi2324310spring.validators.SignUpFormValidator;
 import com.uniovi.sdi2324310spring.validators.UsersValidator;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,22 +18,29 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.uniovi.sdi2324310spring.entities.*;
 import com.uniovi.sdi2324310spring.services.UsersService;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Set;
+
 @Controller
 public class UsersController {
     @Autowired
     private final UsersService usersService;
     @Autowired
     private final SecurityService securityService;
+    private final MarksService marksService;
     @Autowired
     private final RolesService rolesService;
     @Autowired
     private final SignUpFormValidator signUpFormValidator;
     @Autowired
     private final UsersValidator usersValidator;
-    public UsersController(UsersService usersService, SecurityService securityService, RolesService rolesService, SignUpFormValidator
+    public UsersController(UsersService usersService, SecurityService securityService, MarksService marksService, RolesService rolesService, SignUpFormValidator
             signUpFormValidator, UsersValidator usersValidator) {
         this.usersService = usersService;
         this.securityService = securityService;
+        this.marksService = marksService;
         this.rolesService = rolesService;
         this.signUpFormValidator = signUpFormValidator;
         this.usersValidator = usersValidator;
@@ -105,11 +116,13 @@ public class UsersController {
         return "login";
     }
     @RequestMapping(value = {"/home"}, method = RequestMethod.GET)
-    public String home(Model model) {
+    public String home(Model model, Pageable pageable) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
         User activeUser = usersService.getUserByDni(dni);
-        model.addAttribute("markList", activeUser.getMarks());
+        Page<Mark> marks=marksService.getMarksForUser(pageable,activeUser);
+        model.addAttribute("markList", marks.getContent());
+        model.addAttribute("page", marks);
         return "home";
     }
 
