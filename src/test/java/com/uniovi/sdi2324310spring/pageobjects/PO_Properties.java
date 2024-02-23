@@ -1,4 +1,4 @@
-package com.uniovi.notaneitor.pageobjects;
+package com.uniovi.sdi2324310spring.pageobjects;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
