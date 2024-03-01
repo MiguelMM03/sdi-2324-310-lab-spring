@@ -13,8 +13,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface MarksRepository extends CrudRepository<Mark, Long> {
+    @Query("SELECT r FROM Mark r ORDER BY r.description ASC")
     Page<Mark> findAll(Pageable pageable);
-    @Query("SELECT r FROM Mark r WHERE r.user = ?1 ORDER BY r.id ASC")
+    @Query("SELECT r FROM Mark r WHERE r.user = ?1 ORDER BY r.description ASC")
     Page<Mark> findAllByUser(Pageable pageable,User user);
     @Modifying
     @Transactional
